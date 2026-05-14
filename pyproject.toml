@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "churn"
+version = "0.0.1"
+description = "Customer Churn Prediction — CISC 593 P1 (testing-focused coursework)"
+requires-python = ">=3.11"
+authors = [
+    { name = "Emmanuel Ndone Suum" },
+    { name = "Janus Thor Kristjansson" },
+    { name = "Mirriam Chemutai Ronoh" },
+    { name = "Zeyu Wang" },
+]
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+]
+
+[project.optional-dependencies]
+ml = [
+    "scikit-learn>=1.3",
+]
+viz = [
+    "matplotlib>=3.7",
+    "seaborn>=0.12",
+]
+ui = [
+    "flask>=3.0",
+]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "hypothesis>=6.90",
+    "ruff>=0.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
+markers = [
+    "unit: fast, isolated tests for a single unit",
+    "system: end-to-end pipeline tests",
+]
+
+[tool.coverage.run]
+source = ["src/churn"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

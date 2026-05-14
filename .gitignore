@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# venv
+.venv/
+venv/
+env/
+
+# Tooling
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Data — fixtures live in tests/fixtures/ and ARE committed; raw downloads are not
+data/
+!data/.gitkeep
