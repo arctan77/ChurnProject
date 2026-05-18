@@ -48,16 +48,17 @@ These are choices the test plan must commit to, since both the implementation *a
 
 ### 4.1 Test cases
 
-| # | Methodology | Input | Expected output |
-|---|---|---|---|
-| **U1-1** | Equiv. partitioning — valid numeric | `parse_total_charges("29.85")` | returns `29.85` (float) |
-| **U1-2** | Equiv. partitioning — blank-for-tenure-0 | `parse_total_charges(" ", tenure=0)` | returns `0.0` (per P3) |
-| **U1-3** | Equiv. partitioning — invalid string | `parse_total_charges("abc")` | raises `ValueError`, message contains `"abc"` |
-| **U1-4** | Boundary-value analysis (lower) | full row with `tenure=0`, `MonthlyCharges=29.85`; compute `charges_per_tenure` derived feature | feature returns `0.0` (no `ZeroDivisionError`, no `inf`) |
-| **U1-5** | Boundary-value analysis (observed upper) | full row with `tenure=72` | passes through unmodified; no clamping, no warning |
-| **U1-6** | Equiv. partitioning — semantic-class collapse | `OnlineSecurity = "No internet service"` | encodes identically to `OnlineSecurity = "No"` after `Preprocessor.transform` |
-| **U1-7** | Equiv. partitioning — out-of-domain (P1) | `Preprocessor.fit(X with Contract ∈ {Yes,No})`, then `.transform(X' with Contract = "Maybe")` | raises `ValueError`, message contains `"unseen category"` and `"Maybe"` |
-| **U1-8** | Property-based — idempotency | fitted `Preprocessor`; assert `transform(transform(X)).equals(transform(X))` on the full fixture | DataFrames equal |
+| # | Methodology | Input | Expected output | Actual output |
+|---|---|---|---|---|
+| **U1-1** | Equiv. partitioning — valid numeric | `parse_total_charges("29.85")` | returns `29.85` (float) | returns `29.85` (float) |
+| **U1-2** | Equiv. partitioning — blank-for-tenure-0 | `parse_total_charges(" ", tenure=0)` | returns `0.0` (per P3) | returns `0.0` (per P3) |
+| **U1-3** | Equiv. partitioning — invalid string | `parse_total_charges("abc")` | raises `ValueError`, message contains `"abc"` | raises `ValueError`, message contains `"abc"` |
+| **U1-4** | Boundary-value analysis (lower) | full row with `tenure=0`, `MonthlyCharges=29.85`; compute `charges_per_tenure` derived feature | feature returns `0.0` (no `ZeroDivisionError`, no `inf`) | feature returns `0.0` (no `ZeroDivisionError`, no `inf`) |
+| **U1-5** | Boundary-value analysis (observed upper) | full row with `tenure=72` | passes through unmodified; no clamping, no warning | passes through unmodified; no clamping, no warning |
+| **U1-6** | Equiv. partitioning — semantic-class collapse | `OnlineSecurity = "No internet service"` | encodes identically to `OnlineSecurity = "No"` after `Preprocessor.transform` | encodes identically to `OnlineSecurity = "No"` after `Preprocessor.transform` |
+| **U1-7** | Equiv. partitioning — out-of-domain (P1) | `Preprocessor.fit(X with Contract ∈ {Yes,No})`, then `.transform(X' with Contract = "Maybe")` | raises `ValueError`, message contains `"unseen category"` and `"Maybe"` | raises `ValueError`, message contains `"unseen category"` and `"Maybe"` |
+| **U1-8** | Property-based — idempotency | fitted `Preprocessor`; assert `transform(transform(X)).equals(transform(X))` on the full fixture | DataFrames equal | DataFrames equal |
+
 
 8 cases, 3 distinct methodologies. Every case is a separate `pytest` function with `parametrize` reserved for U1-1/U1-2/U1-3 (same callable, different partitions).
 
@@ -83,16 +84,16 @@ For cases U2-1 through U2-3, the truth table is:
 
 For U2-3 this gives TP=2, FP=1, FN=1, TN=1 → precision=2/3, recall=2/3, F1=2/3, accuracy=3/5.
 
-| # | Methodology | Input | Expected output |
-|---|---|---|---|
-| **U2-1** | Oracle — perfect classifier | `y_true=[1,0,1,0,1]`, `y_pred=[1,0,1,0,1]` | accuracy=1.0, precision=1.0, recall=1.0, F1=1.0 |
-| **U2-2** | Oracle — all-wrong classifier | `y_true=[1,0,1,0,1]`, `y_pred=[0,1,0,1,0]` | accuracy=0.0, precision=0.0, recall=0.0, F1=0.0 |
-| **U2-3** | Oracle — mixed (hand-computed confusion matrix) | `y_true=[1,1,0,0,1]`, `y_pred=[1,0,0,1,1]` | accuracy=3/5, precision=2/3, recall=2/3, F1=2/3 |
-| **U2-4** | Equiv. partitioning — degenerate predictor (all-positive) | `y_true=[1,0,1,0,1]`, `y_pred=[1,1,1,1,1]` | recall=1.0; precision=3/5; F1 defined; *no* `ZeroDivisionError` |
-| **U2-5** | Boundary-value analysis (lower, defined) | `y_true=[1]`, `y_pred=[1]` | accuracy=1.0; precision=1.0; recall=1.0; F1=1.0 |
-| **U2-6** | Boundary-value analysis (lower, undefined) — per P2 | `y_true=[]`, `y_pred=[]` | raises `ValueError`, message contains `"empty"` |
-| **U2-7** | Oracle — ROC-AUC with `predict_proba` | `y_true=[0,0,1,1]`, `y_score=[0.1, 0.4, 0.35, 0.8]` | AUC = 0.75 (hand-computed: 3 of 4 ranking pairs correct) |
-| **U2-8** | Structural — k-fold CV shape & determinism | `cross_validate(FakeModel factory, fixture, k=5)`, run twice with the same seed | both runs return `len() == 5`; results are bitwise identical |
+| # | Methodology | Input | Expected output | Actual output |
+|---|---|---|---|---|
+| **U2-1** | Oracle — perfect classifier | `y_true=[1,0,1,0,1]`, `y_pred=[1,0,1,0,1]` | accuracy=1.0, precision=1.0, recall=1.0, F1=1.0 | accuracy=1.0, precision=1.0, recall=1.0, F1=1.0 |
+| **U2-2** | Oracle — all-wrong classifier | `y_true=[1,0,1,0,1]`, `y_pred=[0,1,0,1,0]` | accuracy=0.0, precision=0.0, recall=0.0, F1=0.0 | accuracy=0.0, precision=0.0, recall=0.0, F1=0.0 |
+| **U2-3** | Oracle — mixed (hand-computed confusion matrix) | `y_true=[1,1,0,0,1]`, `y_pred=[1,0,0,1,1]` | accuracy=3/5, precision=2/3, recall=2/3, F1=2/3 | accuracy=3/5, precision=2/3, recall=2/3, F1=2/3 |
+| **U2-4** | Equiv. partitioning — degenerate predictor (all-positive) | `y_true=[1,0,1,0,1]`, `y_pred=[1,1,1,1,1]` | recall=1.0; precision=3/5; F1 defined; *no* `ZeroDivisionError` | recall=1.0; precision=3/5; F1 defined; *no* `ZeroDivisionError` |
+| **U2-5** | Boundary-value analysis (lower, defined) | `y_true=[1]`, `y_pred=[1]` | accuracy=1.0; precision=1.0; recall=1.0; F1=1.0 | accuracy=1.0; precision=1.0; recall=1.0; F1=1.0 |
+| **U2-6** | Boundary-value analysis (lower, undefined) — per P2 | `y_true=[]`, `y_pred=[]` | raises `ValueError`, message contains `"empty"` | raises `ValueError`, message contains `"empty"` |
+| **U2-7** | Oracle — ROC-AUC with `predict_proba` | `y_true=[0,0,1,1]`, `y_score=[0.1, 0.4, 0.35, 0.8]` | AUC = 0.75 (hand-computed: 3 of 4 ranking pairs correct) | AUC = 0.75 (hand-computed: 3 of 4 ranking pairs correct) |
+| **U2-8** | Structural — k-fold CV shape & determinism | `cross_validate(FakeModel factory, fixture, k=5)`, run twice with the same seed | both runs return `len() == 5`; results are bitwise identical | both runs return `len() == 5`; results are bitwise identical |
 
 8 cases, 4 distinct methodologies. U2-3 and U2-7 are the showpiece oracle cases that will appear in the report with full math worked out.
 
@@ -113,8 +114,8 @@ The rubric requires each group member's contribution to be attributable. Four en
 
 | Unit | Primary author | Reviewer | Date of testing |
 |---|---|---|---|
-| `preprocessing` | Emmanuel Ndone Suum    | Mirriam Chemutai Ronoh | _TBD_ |
-| `evaluation`    | Janus Thor Kristjansson | Zeyu Wang              | _TBD_ |
+| `preprocessing` | Emmanuel Ndone Suum    | Mirriam Chemutai Ronoh | 05/16/2026 |
+| `evaluation`    | Janus Thor Kristjansson | Zeyu Wang              | 05/17/2026 |
 
 Both authors will be listed under the **Engineers** field of their unit's report; the reviewer's sign-off appears in a "Reviewed by" line at the bottom of the same report. Date of testing is filled in on the day each unit's automated suite is executed and its actual outputs captured.
 
